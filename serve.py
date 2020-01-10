@@ -1,6 +1,8 @@
 # serve.py
-import falcon
+from japronto import Application
 from sentistrength_id import sentistrength
+
+import json
 
 config = dict()
 config["negation"] = True
@@ -14,45 +16,23 @@ config["exclamation"] = True
 config["punctuation"] = True
 senti = sentistrength(config)
 
-def max_body(limit):
-    def hook(req, resp, resource, params):
-        length = req.content_length
-        if length is not None and length > limit:
-            msg = ('The size of the request is too large. The body must not '
-                   'exceed ' + str(limit) + ' bytes in length.')
-            raise falcon.HTTPRequestEntityTooLarge(
-                'Request body is too large', msg)
-    return hook
-
-
-class SentimentResource:
-
-    @falcon.before(max_body(64 * 2048))
-    def on_post(self, req, resp):
-        """Handles API requests"""
-        try:
-            text = req.params['text']
-            if type(text) == list:
-                text = ','.join(text)
-        except KeyError:
-            raise falcon.HTTPBadRequest(
-                'Missing thing',
-                'A thing must be submitted in the request body.')
-        data = senti.main(text)
-        resp.media = data
-
-    def on_get(self, req, resp):
-        """Handles GET requests"""
-        resp.status = falcon.HTTP_200
-        resp.content_type = 'text/html'
+def get_sentiment(request):
+    """Handles API request"""
+    if request.method == 'GET':
         tutorial = (
             "Lakukan POST dengan parameter <b>text</b>"
             "&nbsp;ke route <b>/</b> untuk mendapatkan hasil analisis"
         )
+        return request.Response(text=tutorial, code=400)
 
-        resp.body = tutorial
+    if request.method == 'POST':
+        if "text" in request.form:
+            text = request.form["text"]
+            data = senti.main(text)
+            return request.Response(text=json.dumps(data), code=200)
+        else:
+            return request.Response("'text' param not found", code=500)
 
-
-api = falcon.API()
-api.req_options.auto_parse_form_urlencoded = True
-api.add_route('/', SentimentResource())
+app = Application()
+app.router.add_route('/', get_sentiment)
+app.run()
