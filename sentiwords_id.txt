@@ -34,6 +34,7 @@ asam:-1
 asap:-2
 asing:-4
 asli:4
+sangat baik:4
 asmara:4
 astaga:-5
 asyik:4
