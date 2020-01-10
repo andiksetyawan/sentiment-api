@@ -35,4 +35,4 @@ def get_sentiment(request):
 
 app = Application()
 app.router.add_route('/', get_sentiment)
-app.run()
+app.run(port=8000, debug=False)
