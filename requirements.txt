@@ -1,2 +1,2 @@
-falcon==2.0.0
+japronto==0.1.2
 numpy==1.16.4

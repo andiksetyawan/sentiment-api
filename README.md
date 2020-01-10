@@ -5,15 +5,18 @@ Analisa dan Dapatkan sentiment dari text berbahasa indonesia dengan alat ini
 ## Install
 
 1. proyek ini di test dan dibuat menggunakan python3
-2. `pip3 install -r requirements.txt`
-3. `pip3 install gunicorn`
-4. jalankan `gunicorn --bind=127.0.0.1 -w 4 serve:api` pada direktori proyek
+2. `pip3 install -r requirements.txt --user`
+4. jalankan `python3 serve.py` pada direktori proyek
 
 ## Usage
 
 Lakukan `POST` ke route `/` dengan parameter `text`
 
 Contoh POST Request : 
+
+```bash
+curl -F "text=halo apa kabar" http://localhost:8000
+```
 
 ```
 POST  HTTP/1.1
