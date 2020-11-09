@@ -1,6 +1,7 @@
 # serve.py
 from japronto import Application
 from sentistrength_id import sentistrength
+from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
 import json
 
@@ -28,7 +29,10 @@ def get_sentiment(request):
     if request.method == 'POST':
         if "text" in request.form:
             text = request.form["text"]
-            data = senti.main(text)
+            factory = StemmerFactory()
+            stemmer = factory.create_stemmer()
+            output   = stemmer.stem(text)
+            data = senti.main(output)
             return request.Response(text=json.dumps(data), code=200)
         else:
             return request.Response("'text' param not found", code=500)
